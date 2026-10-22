@@ -1,0 +1,24 @@
+services:
+
+  app:
+    build: .
+    ports:
+      - "8083:8082"
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/devopspractice
+      DB_USERNAME: postgres
+      DB_PASSWORD: PostgreSQL@4722
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: devopspractice
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: PostgreSQL@4722
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+volumes:
+  postgres_data:
