@@ -63,7 +63,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/Devops-practice
+            cd ~/Devops-Demo
             docker compose pull app
             docker compose up -d app
             docker compose ps
