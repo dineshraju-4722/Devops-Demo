@@ -1,4 +1,5 @@
-name: TaskFlow CI
+
+name: TaskFlow CI/CD
 
 on:
   push:
@@ -47,3 +48,23 @@ jobs:
 
       - name: Push Docker image
         run: docker push ghcr.io/dineshraju-4722/devops-demo:latest
+
+  deploy:
+    name: Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deploy TaskFlow using Docker Compose
+        uses: appleboy/ssh-action@v1.2.2
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/Devops-practice
+            docker compose pull app
+            docker compose up -d app
+            docker compose ps
+

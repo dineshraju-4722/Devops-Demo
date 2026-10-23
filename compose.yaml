@@ -1,7 +1,7 @@
 services:
 
   app:
-    build: .
+    image: ghcr.io/dineshraju-4722/devops-demo:latest
     ports:
       - "8083:8082"
     environment:
