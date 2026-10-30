@@ -31,7 +31,9 @@ public class TaskController {
 	public Task addTask(@Valid @RequestBody CreateTaskRequest request) {
 		return taskRepository.save(new Task(request.title()));
 	}
-
+	@GetMapping("/version")
+	public String getVersion() {return "TaskFlow Release 2";
+	}
 	public record CreateTaskRequest(@NotBlank String title) {
 	}
 }
