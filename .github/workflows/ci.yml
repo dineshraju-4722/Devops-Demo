@@ -1,4 +1,3 @@
-
 name: TaskFlow CI/CD
 
 on:
@@ -37,6 +36,7 @@ jobs:
         run: ./gradlew build
 
       - name: Log in to GitHub Container Registry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -44,10 +44,25 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/dineshraju-4722/devops-demo:latest .
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          IMAGE="ghcr.io/dineshraju-4722/devops-demo"
+          SHA_TAG="${GITHUB_SHA}"
 
-      - name: Push Docker image
-        run: docker push ghcr.io/dineshraju-4722/devops-demo:latest
+          docker build \
+            -t "${IMAGE}:${SHA_TAG}" \
+            -t "${IMAGE}:latest" \
+            .
+
+      - name: Push versioned Docker image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker push "ghcr.io/dineshraju-4722/devops-demo:${GITHUB_SHA}"
+
+      - name: Push latest Docker image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          docker push ghcr.io/dineshraju-4722/devops-demo:latest
 
   deploy:
     name: Deploy to EC2
